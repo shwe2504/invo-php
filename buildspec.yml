@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing necessary packages...
+      - sudo yum update -y && sudo yum install -y zip
+  pre_build:
+    commands:
+      - echo Preparing the package...
+      - zip -r invo.zip .
+  build:
+    commands:
+      - echo Uploading package to AWS CodeArtifact...
+      - aws codeartifact login --tool npm --repository invo-repo --domain invo-domain
+      - aws codeartifact publish --artifact-name invo-package --artifact-type zip --file invo.zip
+  post_build:
+    commands:
+      - echo Triggering deployment pipeline...
+      # Add commands to trigger your deployment pipeline if necessary
+
+artifacts:
+  files:
+    - invo.zip
+
